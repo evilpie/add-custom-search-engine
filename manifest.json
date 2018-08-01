@@ -2,10 +2,15 @@
   "description": "Add a custom search engine to the list of available search engines in the search bar.",
   "manifest_version": 2,
   "name": "Add custom search engine",
-  "version": "1.0",
+  "version": "1.1",
 
   "browser_action": {
-    "default_icon": "search.svg",
+    "default_icon": {
+      "16": "icons/search16.png",
+      "32": "icons/search32.png",
+      "64": "icons/search64.png",
+      "96": "icons/search96.png"
+    },
     "default_title": "Add custom search engine"
   },
 
@@ -14,7 +19,9 @@
   },
 
   "icons": {
-    "48": "search.svg",
-    "96": "search.svg"
+    "16": "icons/search16.png",
+    "32": "icons/search32.png",
+    "64": "icons/search64.png",
+    "96": "icons/search96.png"
   }
 }
