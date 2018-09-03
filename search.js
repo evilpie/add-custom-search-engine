@@ -1,3 +1,4 @@
+"use strict";
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -20,16 +21,16 @@ function createXMLString() {
   const data = new FormData(form);
 
   // Name
-  let name = doc.getElementsByTagName("ShortName")[0];
+  const name = doc.getElementsByTagName("ShortName")[0];
   name.textContent = data.get("name");
 
   // Search URL
-  let url = doc.querySelector(`Url[type="text/html"]`);
+  const url = doc.querySelector("Url[type=\"text/html\"]");
   url.setAttribute("method", "GET");
   url.setAttribute("template", data.get("url").replace("%s", "{searchTerms}"));
 
   // Icon
-  let image = doc.getElementsByTagName("Image")[0];
+  const image = doc.getElementsByTagName("Image")[0];
   if (data.get("icon")) {
     image.textContent = data.get("icon");
   } else {
@@ -39,7 +40,7 @@ function createXMLString() {
   // == Advanced ==
 
   // Suggest URL
-  let suggestUrl = doc.querySelector(`Url[type="application/x-suggestions+json"]`);
+  const suggestUrl = doc.querySelector("Url[type=\"application/x-suggestions+json\"]");
   if (data.get("suggest-url")) {
     suggestUrl.setAttribute("method", "GET");
     suggestUrl.setAttribute("template", data.get("suggest-url"));
@@ -48,20 +49,20 @@ function createXMLString() {
   }
 
   // Input Encoding
-  let encoding = doc.getElementsByTagName("InputEncoding")[0];
+  const encoding = doc.getElementsByTagName("InputEncoding")[0];
   if (data.get("encoding")) {
     encoding.textContent = data.get("encoding");
   }
 
   // Description
-  let description = doc.getElementsByTagName("Description")[0];
+  const description = doc.getElementsByTagName("Description")[0];
   if (data.get("description")) {
     description.textContent = data.get("description");
   } else {
     description.remove();
   }
 
-  let serialzer = new XMLSerializer();
+  const serialzer = new XMLSerializer();
   return serialzer.serializeToString(doc);
 }
 
