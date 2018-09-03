@@ -9,28 +9,26 @@ const XML_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
 <InputEncoding>UTF-8</InputEncoding>
 <Image height="16" width="16"></Image>
 <Url type="text/html" method="get" template=""></Url>
+<Url type="application/x-suggestions+json" method="get" template=""></Url>
 </OpenSearchDescription>`;
 
-document.querySelector("form").addEventListener("submit", event => {
-  var parser = new DOMParser();
-  var doc = parser.parseFromString(XML_TEMPLATE, "application/xml");
+function createXMLString() {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(XML_TEMPLATE, "application/xml");
 
-  var data = new FormData(event.target);
+  const form = document.querySelector("form");
+  const data = new FormData(form);
 
+  // Name
   let name = doc.getElementsByTagName("ShortName")[0];
   name.textContent = data.get("name");
 
-  if (data.get("description")) {
-    let description = doc.getElementsByTagName("Description")[0];
-    description.textContent = data.get("description");
-  }
-
-  let urlTemplate = data.get("url").replace("%s", "{searchTerms}");
-
-  let url = doc.getElementsByTagName("Url")[0];
+  // Search URL
+  let url = doc.querySelector(`Url[type="text/html"]`);
   url.setAttribute("method", "GET");
-  url.setAttribute("template", urlTemplate);
+  url.setAttribute("template", data.get("url").replace("%s", "{searchTerms}"));
 
+  // Icon
   let image = doc.getElementsByTagName("Image")[0];
   if (data.get("icon")) {
     image.textContent = data.get("icon");
@@ -38,8 +36,37 @@ document.querySelector("form").addEventListener("submit", event => {
     image.remove();
   }
 
+  // == Advanced ==
+
+  // Suggest URL
+  let suggestUrl = doc.querySelector(`Url[type="application/x-suggestions+json"]`);
+  if (data.get("suggest-url")) {
+    suggestUrl.setAttribute("method", "GET");
+    suggestUrl.setAttribute("template", data.get("suggest-url"));
+  } else {
+    suggestUrl.remove();
+  }
+
+  // Input Encoding
+  let encoding = doc.getElementsByTagName("InputEncoding")[0];
+  if (data.get("encoding")) {
+    encoding.textContent = data.get("encoding");
+  }
+
+  // Description
+  let description = doc.getElementsByTagName("Description")[0];
+  if (data.get("description")) {
+    description.textContent = data.get("description");
+  } else {
+    description.remove();
+  }
+
   let serialzer = new XMLSerializer();
-  let string = serialzer.serializeToString(doc);
+  return serialzer.serializeToString(doc);
+}
+
+document.querySelector("form").addEventListener("submit", event => {
+  const string = createXMLString();
 
   fetch("https://file.io/?expires=1d", {
     method: "POST",
@@ -53,9 +80,37 @@ document.querySelector("form").addEventListener("submit", event => {
   event.preventDefault();
 });
 
-document.querySelector("#input-icon").addEventListener("change", event => {
-  let url = event.target.value;
+document.querySelector("#show-preview").addEventListener("click", event => {
+  const string = createXMLString();
+
+  const code = document.querySelector("#preview");
+  code.textContent = string;
+
+  event.preventDefault();
+});
+
+function loadIcon() {
+  const url = document.querySelector("#input-icon").value;
   if (url) {
     document.querySelector("#icon-preview").src = url;
   }
-})
+}
+document.querySelector("#input-icon").addEventListener("change", loadIcon);
+
+function showAdvanced() {
+  const checked = document.querySelector("#show-advanced").checked;
+
+  document.querySelectorAll(".advanced").forEach(element => {
+    element.classList.toggle("adv-hidden", !checked);
+  });
+
+  if (!checked) {
+    document.querySelector("#preview").textContent = "";
+  }
+}
+document.querySelector("#show-advanced").addEventListener("change", showAdvanced);
+
+document.addEventListener("DOMContentLoaded", () => {
+  showAdvanced();
+  loadIcon();
+});
