@@ -69,12 +69,18 @@ function createXMLString() {
 document.querySelector("form").addEventListener("submit", event => {
   const string = createXMLString();
 
+  // Upload the OpenSearch XML description to file.io, because AddSearchProvider
+  // requires http(s) URLs. After the xml is downloaded to start the installation
+  // process, the file should be automatically removed.
+  
+  // NB: The documentation on file.io is wrong: 1d is 1 day, but just 1 is 1 week!
   fetch("https://file.io/?expires=1d", {
     method: "POST",
     body: new URLSearchParams({text: string})
   }).then(response => {
     return response.json();
   }).then(json => {
+    // Where the magic happens!
     window.external.AddSearchProvider(json.link);
   });
 
