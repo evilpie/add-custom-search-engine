@@ -26,6 +26,15 @@
       .adv-hidden {
         display: none;
       }
+
+      input[type=file] {
+        display: none;
+      }
+
+      label[for=input-file-icon] {
+        width: 100%;
+        -moz-appearance: button;
+      }
     </style>
 </head>
 <body class="bg-light">
@@ -51,12 +60,16 @@
     <label for="input-icon">Icon <span class="text-muted">(Optional)</span></label>
 
     <div class="row">
-      <div class="col-sm-11">
+      <div class="col-sm-9">
         <input type="text" class="form-control" id="input-icon" name="icon" placeholder="https://example.org/favicon.ico">
-     </div>
-     <div class="col-sm-1">
-      <img src="icons/search.svg" id="icon-preview">
-     </div>
+      </div>
+      <div class="col-sm-2">
+        <label for="input-file-icon" class="btn btn-secondary">Browse</label>
+        <input type="file" id="input-file-icon" class="btn btn-secondary">
+      </div>
+      <div class="col-sm-1">
+        <img src="icons/search.svg" id="icon-preview">
+      </div>
     </div>
 
     <p class="form-text text-muted">Icon should be at least 16×16 pixels -
@@ -102,6 +115,5 @@
 </pre>
 
 <script type="text/javascript" src="search.js"></script>
-</script>
 </body>
 </html>

@@ -72,7 +72,7 @@ document.querySelector("form").addEventListener("submit", event => {
   // Upload the OpenSearch XML description to file.io, because AddSearchProvider
   // requires http(s) URLs. After the xml is downloaded to start the installation
   // process, the file should be automatically removed.
-  
+
   // NB: The documentation on file.io is wrong: 1d is 1 day, but just 1 is 1 week!
   fetch("https://file.io/?expires=1d", {
     method: "POST",
@@ -96,11 +96,21 @@ document.querySelector("#show-preview").addEventListener("click", event => {
   event.preventDefault();
 });
 
+document.querySelector("#input-file-icon").addEventListener("change", event => {
+  const reader = new FileReader();
+  reader.addEventListener("load", function () {
+    document.querySelector("#input-icon").value = reader.result;
+    loadIcon();
+  }, false);
+
+  if (event.target.files && event.target.files[0]) {
+    reader.readAsDataURL(event.target.files[0]);
+  }
+});
+
 function loadIcon() {
   const url = document.querySelector("#input-icon").value;
-  if (url) {
-    document.querySelector("#icon-preview").src = url;
-  }
+  document.querySelector("#icon-preview").src = url || "icons/search.svg";
 }
 document.querySelector("#input-icon").addEventListener("change", loadIcon);
 
