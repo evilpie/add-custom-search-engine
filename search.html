@@ -27,6 +27,10 @@
         display: none;
       }
 
+      #post-checkbox {
+        margin-bottom: .5rem;
+      }
+
       input[type=file] {
         display: none;
       }
@@ -54,6 +58,14 @@
     <label for="input-url">Search URL</label>
     <input type="url" class="form-control" id="input-url" name="url" placeholder="https://example.org/search?q=%s" required>
     <p class="form-text text-muted"><b>%s</b> is substituted with the entered search query</p>
+  </div>
+
+  <div class="form-group advanced adv-hidden">
+    <div class="custom-control custom-checkbox" id="post-checkbox">
+      <input type="checkbox" class="custom-control-input" id="use-post" name="use-post">
+      <label class="custom-control-label" for="use-post">Use <code>POST</code> query parameters <span class="text-muted">(Optional)</span></label>
+    </div>
+    <input type="text" class="form-control" id="input-post" name="post" placeholder="q={searchTerms}&foo=bar" disabled>
   </div>
 
   <div class="form-group">

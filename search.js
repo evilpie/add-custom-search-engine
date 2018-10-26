@@ -9,7 +9,8 @@ const XML_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
 <Description></Description>
 <InputEncoding>UTF-8</InputEncoding>
 <Image height="16" width="16"></Image>
-<Url type="text/html" method="get" template=""></Url>
+<Url type="text/html" method="get" template="">
+</Url>
 <Url type="application/x-suggestions+json" method="get" template=""></Url>
 </OpenSearchDescription>`;
 
@@ -26,8 +27,20 @@ function createXMLString() {
 
   // Search URL
   const url = doc.querySelector("Url[type=\"text/html\"]");
-  url.setAttribute("method", "GET");
   url.setAttribute("template", data.get("url").replace("%s", "{searchTerms}"));
+  if (data.get("use-post")) {
+    url.setAttribute("method", "POST");
+
+    const params = new URLSearchParams(data.get("post"));
+    for (const [name, value] of params) {
+      const param = doc.createElement("Param");
+      param.setAttribute("name", name);
+      param.setAttribute("value", value);
+      url.append(param);
+    }
+  } else {
+    url.setAttribute("method", "GET");
+  }
 
   // Icon
   const image = doc.getElementsByTagName("Image")[0];
@@ -96,6 +109,15 @@ document.querySelector("#show-preview").addEventListener("click", event => {
   event.preventDefault();
 });
 
+function usePost() {
+  const checked = document.querySelector("#use-post").checked;
+  document.querySelector("#input-post").disabled = !checked;
+  if (!checked) {
+    document.querySelector("#input-post").value = "";
+  }
+}
+document.querySelector("#use-post").addEventListener("change", usePost);
+
 document.querySelector("#input-file-icon").addEventListener("change", event => {
   const reader = new FileReader();
   reader.addEventListener("load", function () {
@@ -123,11 +145,14 @@ function showAdvanced() {
 
   if (!checked) {
     document.querySelector("#preview").textContent = "";
+    document.querySelector("#input-post").value = "";
+    document.querySelector("#use-post").checked = false;
   }
 }
 document.querySelector("#show-advanced").addEventListener("change", showAdvanced);
 
 document.addEventListener("DOMContentLoaded", () => {
   showAdvanced();
+  usePost();
   loadIcon();
 });
