@@ -9,8 +9,7 @@ const XML_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
 <Description></Description>
 <InputEncoding>UTF-8</InputEncoding>
 <Image height="16" width="16"></Image>
-<Url type="text/html" method="get" template="">
-</Url>
+<Url type="text/html" method="get" template=""></Url>
 <Url type="application/x-suggestions+json" method="get" template=""></Url>
 </OpenSearchDescription>`;
 
@@ -33,9 +32,10 @@ function createXMLString() {
 
     const params = new URLSearchParams(data.get("post"));
     for (const [name, value] of params) {
-      const param = doc.createElement("Param");
+      const param = doc.createElementNS("http://a9.com/-/spec/opensearch/1.1/", "Param");
       param.setAttribute("name", name);
       param.setAttribute("value", value);
+      url.append("\n"); // Nicer format!
       url.append(param);
     }
   } else {
