@@ -1,0 +1,66 @@
+body {
+  max-width: 800px;
+  margin: 0 auto 0 auto;
+}
+
+#icon-preview {
+  height: calc(2.25rem + 2px);
+  width: calc(2.25rem + 2px);
+  object-fit: contain;
+}
+
+/* advanced options are initially hidden */
+.adv-hidden {
+  display: none;
+}
+
+#post-checkbox {
+  margin-bottom: .5rem;
+}
+
+input[type=file] {
+  display: none;
+}
+
+label[for=input-file-icon] {
+  width: 100%;
+  -moz-appearance: button;
+}
+
+#instructions {
+  display: none;
+}
+
+#arrow {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  margin-left:-20px;
+  width: 40px;
+  height: 40px;
+  background-image: url(icons/arrow.svg);
+  background-size: contain;
+  animation: bounce 2s infinite;
+}
+
+#info {
+  margin: auto;
+  padding-top: 100px;
+  width: 800px;
+}
+
+#info p {
+  margin-top: 0.5em;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}

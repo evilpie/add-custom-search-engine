@@ -4,45 +4,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add custom search engine</title>
-    <link rel="stylesheet" href="bootstrap.4.1.3.min.css" />
-    <link rel="icon" href="icons/search.svg" type="image/svg+xml" />
-
     <meta charset="utf-8">
 
-    <style type="text/css">
-      body {
-        max-width: 800px;
-        margin: 0 auto 0 auto;
-      }
+    <title>Add custom search engine</title>
 
-      #icon-preview {
-        height: calc(2.25rem + 2px);
-        width: calc(2.25rem + 2px);
-        object-fit: contain;
-      }
+    <link rel="stylesheet" href="bootstrap.4.1.3.min.css" />
+    <link rel="stylesheet" href="style.css" />
 
-      /* advanced options are initially hidden */
-      .adv-hidden {
-        display: none;
-      }
-
-      #post-checkbox {
-        margin-bottom: .5rem;
-      }
-
-      input[type=file] {
-        display: none;
-      }
-
-      label[for=input-file-icon] {
-        width: 100%;
-        -moz-appearance: button;
-      }
-    </style>
+    <link rel="icon" href="icons/search.svg" type="image/svg+xml" />
 </head>
 <body class="bg-light">
 
+<div id="instructions">
+<div id="arrow"></div>
+<div id="info" class="text-center">
+  <h3>Adding a new search engine via the URL bar</h3>
+  <div>
+    <img src="icons/urlbar.png">
+    <p><strong>Open the "Page actions" menu</strong></p>
+    <img src="icons/pageaction.png">
+    <p><strong>Click "Add Search Engine"</strong></p>
+    <p class="text-muted">This option will not appear if a search engine with that name already exists.<br>
+    Go to <mark>about:preferences#search</mark> to see your installed search engines.</p>
+
+    <button id="close" class="btn btn-primary">Go back</button>
+  </div>
+</div>
+</div>
+
+<div id="main">
 <div class="py-5 text-center">
 <img src="icons/search.svg" width="35" height="35">
 <h1>Add custom search engine</h1>
@@ -90,6 +80,11 @@
   </div>
 
   <div class="form-group">
+    <label>Keyword</label>
+    <p class="text-muted"><strong>Tip:</strong> A keyword can be added by going to <mark>about:preferences#search</mark> after adding the search engine and editing the <em>Keyword</em> column</p>
+  </div>
+
+  <div class="form-group">
     <div class="custom-control custom-checkbox">
       <input type="checkbox" class="custom-control-input" id="show-advanced">
       <label class="custom-control-label" for="show-advanced">Show advanced options</label>
@@ -128,6 +123,7 @@
 
 <pre id="preview" class="advanced adv-hidden">
 </pre>
+</div>
 
 <script type="text/javascript" src="search.js"></script>
 </body>

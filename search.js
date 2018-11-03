@@ -79,7 +79,9 @@ function createXMLString() {
   return serialzer.serializeToString(doc);
 }
 
-document.querySelector("form").addEventListener("submit", event => {
+document.querySelector("form").addEventListener("submit", async event => {
+  event.preventDefault();
+
   const string = createXMLString();
 
   // Upload the OpenSearch XML description to file.io, because AddSearchProvider
@@ -87,18 +89,49 @@ document.querySelector("form").addEventListener("submit", event => {
   // process, the file should be automatically removed.
 
   // NB: The documentation on file.io is wrong: 1d is 1 day, but just 1 is 1 week!
-  fetch("https://file.io/?expires=1d", {
-    method: "POST",
-    body: new URLSearchParams({text: string})
-  }).then(response => {
-    return response.json();
-  }).then(json => {
-    // Where the magic happens!
-    window.external.AddSearchProvider(json.link);
-  });
+  try {
+    let response = await fetch("https://file.io/?expires=1d", {
+      method: "POST",
+      body: new URLSearchParams({text: string})
+    });
+    let json = await response.json();
 
-  event.preventDefault();
+    let {version} = await browser.runtime.getBrowserInfo();
+    if (+/(\d+)\./.exec(version)[1] >= 65) {
+      // Mozilla intentionally disabled AddSearchProvider :(
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1503551
+
+      let link = document.createElement("link");
+      link.rel = "search";
+      link.type = "application/opensearchdescription+xml";
+      link.title = document.querySelector("#input-name").value;
+      link.href = json.link;
+
+      // This doesn't actually seem to work. Firefox seems to cache.
+      let existing = document.querySelector("link[rel=search]");
+      if (existing) {
+        existing.remove();
+      }
+
+      document.head.append(link);
+
+      document.querySelector("#main").style.display = "none";
+      document.querySelector("#instructions").style.display = "block";
+    } else {
+      // Where the magic happens!
+      window.external.AddSearchProvider(json.link);
+    }
+  } catch(error) {
+    alert(error);
+  };
 });
+
+document.querySelector("#close").addEventListener("click", event => {
+  event.preventDefault();
+
+  document.querySelector("#main").style.display = "block";
+  document.querySelector("#instructions").style.display = "none";
+})
 
 document.querySelector("#show-preview").addEventListener("click", event => {
   const string = createXMLString();
@@ -156,3 +189,13 @@ document.addEventListener("DOMContentLoaded", () => {
   usePost();
   loadIcon();
 });
+
+// One-click selection for convience, because we can't directly link about:preferences
+document.querySelectorAll("mark").forEach(mark => mark.addEventListener("click", event => {
+  let range = document.createRange();
+  range.selectNodeContents(event.target);
+
+  let selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+}));
