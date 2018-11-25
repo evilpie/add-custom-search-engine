@@ -97,7 +97,7 @@ document.querySelector("form").addEventListener("submit", async event => {
     let json = await response.json();
 
     let {version} = await browser.runtime.getBrowserInfo();
-    if (+/(\d+)\./.exec(version)[1] >= 65) {
+    if (version.includes("a")) {
       // Mozilla intentionally disabled AddSearchProvider :(
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1503551
 
