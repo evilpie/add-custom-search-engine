@@ -151,6 +151,17 @@ function usePost() {
 }
 document.querySelector("#use-post").addEventListener("change", usePost);
 
+document.querySelector("#input-url").addEventListener("change", event => {
+  try {
+    const url = new URL(event.target.value);
+    const icon = document.querySelector("#input-icon");
+    if (!icon.value) {
+      icon.value = url.origin + "/favicon.ico";
+      icon.dispatchEvent(new Event("change"));
+    }
+  } catch (e) {}
+});
+
 document.querySelector("#input-file-icon").addEventListener("change", event => {
   const reader = new FileReader();
   reader.addEventListener("load", function () {
