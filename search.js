@@ -97,7 +97,8 @@ document.querySelector("form").addEventListener("submit", async event => {
     let json = await response.json();
 
     let {version} = await browser.runtime.getBrowserInfo();
-    if (version.includes("a")) {
+    // if (version.includes("a")) {
+    if (false) { // Right now AddSearchProvider is only deprecated, not disabled.
       // Mozilla intentionally disabled AddSearchProvider :(
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1503551
 

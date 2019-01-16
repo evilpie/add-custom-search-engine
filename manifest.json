@@ -2,7 +2,7 @@
   "description": "Add a custom search engine to the list of available search engines in the search bar.",
   "manifest_version": 2,
   "name": "Add custom search engine",
-  "version": "1.6",
+  "version": "1.7",
 
   "browser_action": {
     "default_icon": {
