@@ -85,7 +85,7 @@ document.querySelector("form").addEventListener("submit", async event => {
   const string = createXMLString();
 
   // Upload the OpenSearch XML description to file.io, because AddSearchProvider
-  // requires http(s) URLs. After the xml is downloaded to start the installation
+  // requires http(s) URLs. After the XML is downloaded to start the installation
   // process, the file should be automatically removed.
 
   // NB: The documentation on file.io is wrong: 1d is 1 day, but just 1 is 1 week!
@@ -94,34 +94,19 @@ document.querySelector("form").addEventListener("submit", async event => {
       method: "POST",
       body: new URLSearchParams({text: string})
     });
+
     let json = await response.json();
 
-    let {version} = await browser.runtime.getBrowserInfo();
-    // if (version.includes("a")) {
-    if (false) { // Right now AddSearchProvider is only deprecated, not disabled.
-      // Mozilla intentionally disabled AddSearchProvider :(
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=1503551
-
-      let link = document.createElement("link");
-      link.rel = "search";
-      link.type = "application/opensearchdescription+xml";
-      link.title = document.querySelector("#input-name").value;
-      link.href = json.link;
-
-      // This doesn't actually seem to work. Firefox seems to cache.
-      let existing = document.querySelector("link[rel=search]");
-      if (existing) {
-        existing.remove();
-      }
-
-      document.head.append(link);
-
-      document.querySelector("#main").style.display = "none";
-      document.querySelector("#instructions").style.display = "block";
-    } else {
-      // Where the magic happens!
-      window.external.AddSearchProvider(json.link);
+    if (json.error) {
+      alert(`Error while submitting data to file.io:\n\n${JSON.stringify(json)}`);
+      return;
     }
+
+    // Wait a bit to hopefully reduce the "Too many requests" error.
+    await new Promise(resolve => setTimeout(resolve, 400));
+
+    // Where the magic happens!
+    window.external.AddSearchProvider(json.link);
   } catch(error) {
     alert(error);
   };
