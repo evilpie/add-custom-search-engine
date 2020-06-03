@@ -105,8 +105,32 @@ document.querySelector("form").addEventListener("submit", async event => {
     // Wait a bit to hopefully reduce the "Too many requests" error.
     await new Promise(resolve => setTimeout(resolve, 400));
 
-    // Where the magic happens!
-    window.external.AddSearchProvider(json.link);
+    let {version} = await browser.runtime.getBrowserInfo();
+    version = +/(\d+)\./.exec(version)[0];
+    if (version >= 78) {
+      // Mozilla intentionally disabled AddSearchProvider :(
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1632447
+
+      let link = document.createElement("link");
+      link.rel = "search";
+      link.type = "application/opensearchdescription+xml";
+      link.title = document.querySelector("#input-name").value;
+      link.href = json.link;
+
+      // This doesn't actually seem to work. Firefox seems to cache.
+      let existing = document.querySelector("link[rel=search]");
+      if (existing) {
+        existing.remove();
+      }
+
+      document.head.append(link);
+
+      document.querySelector("#main").style.display = "none";
+      document.querySelector("#instructions").style.display = "block";
+    } else {
+      // Where the magic used to happen ...
+      window.external.AddSearchProvider(json.link);
+    }
   } catch(error) {
     alert(error);
   };
