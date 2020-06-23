@@ -35,7 +35,7 @@
   },
 
   "permissions": [
-    "https://file.io/*"
+    "https://paste.mozilla.org/api/"
   ],
 
   "options_ui": {

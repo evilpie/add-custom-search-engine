@@ -88,22 +88,20 @@ document.querySelector("form").addEventListener("submit", async event => {
   // requires http(s) URLs. After the XML is downloaded to start the installation
   // process, the file should be automatically removed.
 
-  // NB: The documentation on file.io is wrong: 1d is 1 day, but just 1 is 1 week!
   try {
-    let response = await fetch("https://file.io/?expires=1d", {
+    let response = await fetch("https://paste.mozilla.org/api/", {
       method: "POST",
-      body: new URLSearchParams({text: string})
+      body: new URLSearchParams({
+        content: string,
+        format: "json",
+        expires: "onetime",
+        lexer: "xml"
+      })
     });
 
     let json = await response.json();
-
-    if (json.error) {
-      alert(`Error while submitting data to file.io:\n\n${JSON.stringify(json)}`);
-      return;
-    }
-
-    // Wait a bit to hopefully reduce the "Too many requests" error.
-    await new Promise(resolve => setTimeout(resolve, 400));
+    // We need the raw XML instead of the pretty HTML view
+    let url = json.url + "/raw";
 
     let {version} = await browser.runtime.getBrowserInfo();
     version = +/(\d+)\./.exec(version)[0];
@@ -115,7 +113,7 @@ document.querySelector("form").addEventListener("submit", async event => {
       link.rel = "search";
       link.type = "application/opensearchdescription+xml";
       link.title = document.querySelector("#input-name").value;
-      link.href = json.link;
+      link.href = url;
 
       // This doesn't actually seem to work. Firefox seems to cache.
       let existing = document.querySelector("link[rel=search]");
@@ -129,7 +127,7 @@ document.querySelector("form").addEventListener("submit", async event => {
       document.querySelector("#instructions").style.display = "block";
     } else {
       // Where the magic used to happen ...
-      window.external.AddSearchProvider(json.link);
+      window.external.AddSearchProvider(url);
     }
   } catch(error) {
     alert(error);
