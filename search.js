@@ -42,7 +42,7 @@ function createXMLString() {
 
   // Search URL
   const url = doc.querySelector("Url[type=\"text/html\"]");
-  url.setAttribute("template", data.get("url").replace("%s", "{searchTerms}"));
+  url.setAttribute("template", data.get("url").replace(/%s/g, "{searchTerms}"));
   if (data.get("use-post")) {
     url.setAttribute("method", "POST");
 
