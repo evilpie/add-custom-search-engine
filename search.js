@@ -19,7 +19,7 @@ function htmlEntityEncode(before) {
 
   for (let char of before) {
     let codePoint = char.codePointAt(0);
-    if (codePoint < 127) {
+    if ((codePoint >= 65 && codePoint < 91) || (codePoint >= 97 && codePoint < 123)) {
       after += char;
     } else {
       after += `&#${codePoint};`;
