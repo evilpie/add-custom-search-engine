@@ -5,13 +5,29 @@
 
 const XML_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
-<ShortName></ShortName>
+<ShortName>####REPLACE####</ShortName>
 <Description></Description>
 <InputEncoding>UTF-8</InputEncoding>
 <Image height="16" width="16"></Image>
 <Url type="text/html" method="get" template=""></Url>
 <Url type="application/x-suggestions+json" method="get" template=""></Url>
 </OpenSearchDescription>`;
+
+// Work around broken paste.mozilla.org when using Cyrillic.
+function htmlEntityEncode(before) {
+  let after = "";
+
+  for (let char of before) {
+    let codePoint = char.codePointAt(0);
+    if (codePoint < 127) {
+      after += char;
+    } else {
+      after += `&#${codePoint};`;
+    }
+  }
+
+  return after;
+}
 
 function createXMLString() {
   const parser = new DOMParser();
@@ -20,9 +36,9 @@ function createXMLString() {
   const form = document.querySelector("form");
   const data = new FormData(form);
 
-  // Name
-  const name = doc.getElementsByTagName("ShortName")[0];
-  name.textContent = data.get("name");
+  // // Name
+  // const name = doc.getElementsByTagName("ShortName")[0];
+  // name.innerText = data.get("name");
 
   // Search URL
   const url = doc.querySelector("Url[type=\"text/html\"]");
@@ -76,7 +92,11 @@ function createXMLString() {
   }
 
   const serialzer = new XMLSerializer();
-  return serialzer.serializeToString(doc);
+  const string = serialzer.serializeToString(doc);
+
+  // Name
+  // Work around textContent not passing through HTML entities.
+  return string.replace("####REPLACE####", htmlEntityEncode(data.get("name")))
 }
 
 document.querySelector("form").addEventListener("submit", async event => {
