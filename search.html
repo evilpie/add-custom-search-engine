@@ -46,7 +46,7 @@
 
   <div class="form-group">
     <label for="input-url">Search URL</label>
-    <input type="url" class="form-control" id="input-url" name="url" placeholder="https://example.org/search?q=%s" required>
+    <input type="text" class="form-control" id="input-url" name="url" placeholder="https://example.org/search?q=%s" required>
     <p class="form-text text-muted"><b>%s</b> is substituted with the entered search query</p>
   </div>
 
@@ -97,7 +97,7 @@
 
   <div class="form-group advanced adv-hidden">
     <label for="input-suggest-url">Suggest URL <span class="text-muted">(Optional)</span></label>
-    <input type="url" class="form-control" id="input-suggest-url" name="suggest-url" placeholder="https://example.org/suggestions?q={searchTerms}">
+    <input type="text" class="form-control" id="input-suggest-url" name="suggest-url" placeholder="https://example.org/suggestions?q={searchTerms}">
     <p class="form-text text-muted"><b>{searchTerms}</b> is substituted with the entered search query (<code>application/x-suggestions+json</code>)</p>
   </div>
 
