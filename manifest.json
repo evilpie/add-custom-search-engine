@@ -35,7 +35,8 @@
   },
 
   "permissions": [
-    "https://paste.mozilla.org/api/"
+    "https://paste.mozilla.org/api/",
+    "search"
   ],
 
   "options_ui": {

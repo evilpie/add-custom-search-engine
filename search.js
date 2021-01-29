@@ -223,6 +223,23 @@ function showAdvanced() {
 }
 document.querySelector("#show-advanced").addEventListener("change", showAdvanced);
 
+async function checkName(event) {
+  const searchEngines = await browser.search.get();
+
+  for (const engine of searchEngines) {
+    if (engine.name === event.target.value) {
+      event.target.setCustomValidity("Search engine with this name already exists.");
+      event.target.reportValidity();
+      event.target.preventDefault();
+      return;
+    }
+  }
+
+  event.target.setCustomValidity("");
+  event.target.reportValidity();
+}
+document.querySelector("#input-name").addEventListener("change", checkName);
+
 document.addEventListener("DOMContentLoaded", () => {
   showAdvanced();
   usePost();
