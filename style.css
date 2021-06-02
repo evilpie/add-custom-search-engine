@@ -9,6 +9,10 @@ body {
   object-fit: contain;
 }
 
+mark {
+  background-color: #fff9d8ee;
+}
+
 /* advanced options are initially hidden */
 .adv-hidden {
   display: none;

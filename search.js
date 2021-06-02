@@ -123,32 +123,22 @@ document.querySelector("form").addEventListener("submit", async event => {
     // We need the raw XML instead of the pretty HTML view
     let url = json.url + "/raw";
 
-    let {version} = await browser.runtime.getBrowserInfo();
-    version = +/(\d+)\./.exec(version)[0];
-    if (version >= 78) {
-      // Mozilla intentionally disabled AddSearchProvider :(
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=1632447
+    let link = document.createElement("link");
+    link.rel = "search";
+    link.type = "application/opensearchdescription+xml";
+    link.title = document.querySelector("#input-name").value;
+    link.href = url;
 
-      let link = document.createElement("link");
-      link.rel = "search";
-      link.type = "application/opensearchdescription+xml";
-      link.title = document.querySelector("#input-name").value;
-      link.href = url;
-
-      // This doesn't actually seem to work. Firefox seems to cache.
-      let existing = document.querySelector("link[rel=search]");
-      if (existing) {
-        existing.remove();
-      }
-
-      document.head.append(link);
-
-      document.querySelector("#main").style.display = "none";
-      document.querySelector("#instructions").style.display = "block";
-    } else {
-      // Where the magic used to happen ...
-      window.external.AddSearchProvider(url);
+    // This doesn't actually seem to work. Firefox seems to cache.
+    let existing = document.querySelector("link[rel=search]");
+    if (existing) {
+      existing.remove();
     }
+
+    document.head.append(link);
+
+    document.querySelector("#main").style.display = "none";
+    document.querySelector("#instructions").style.display = "block";
   } catch(error) {
     alert(error);
   };
