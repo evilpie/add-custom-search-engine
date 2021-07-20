@@ -121,7 +121,8 @@ document.querySelector("form").addEventListener("submit", async event => {
 
     let json = await response.json();
     // We need the raw XML instead of the pretty HTML view
-    let url = json.url + "/raw";
+    // Mozilla's dpaste instance is misconfigured, we have to fix the URL.
+    let url = json.url.replace("dpaste-base-url.example.org", "paste.mozilla.org") + "/raw";
 
     let link = document.createElement("link");
     link.rel = "search";
