@@ -71,6 +71,7 @@ function createXMLString() {
   // Suggest URL
   const suggestUrl = doc.querySelector("Url[type=\"application/x-suggestions+json\"]");
   if (data.get("suggest-url")) {
+    suggestUrl.setAttribute("rel", "suggestions");
     suggestUrl.setAttribute("method", "GET");
     suggestUrl.setAttribute("template", data.get("suggest-url"));
   } else {
