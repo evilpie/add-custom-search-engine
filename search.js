@@ -13,7 +13,7 @@ const XML_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
 <Url type="application/x-suggestions+json" method="get" template=""></Url>
 </OpenSearchDescription>`;
 
-// Work around broken paste.mozilla.org when using Cyrillic.
+// Work around broken prod.pastebin.prod.webservices.mozgcp.net when using Cyrillic.
 function htmlEntityEncode(before) {
   let after = "";
 
@@ -109,7 +109,7 @@ document.querySelector("form").addEventListener("submit", async event => {
   // process, the file should be automatically removed.
 
   try {
-    let response = await fetch("https://paste.mozilla.org/api/", {
+    let response = await fetch("https://prod.pastebin.prod.webservices.mozgcp.net/api/", {
       method: "POST",
       body: new URLSearchParams({
         content: string,
@@ -122,7 +122,7 @@ document.querySelector("form").addEventListener("submit", async event => {
     let json = await response.json();
     // We need the raw XML instead of the pretty HTML view
     // Mozilla's dpaste instance is misconfigured, we have to fix the URL.
-    let url = json.url.replace("dpaste-base-url.example.org", "paste.mozilla.org") + "/raw";
+    let url = json.url.replace("dpaste-base-url.example.org", "prod.pastebin.prod.webservices.mozgcp.net") + "/raw";
 
     let link = document.createElement("link");
     link.rel = "search";
