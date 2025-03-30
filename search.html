@@ -111,11 +111,29 @@
   </div>
 
   <div class="form-group">
-    <button type="submit" class="btn btn-primary">Add custom search engine</button>
-    <button type="submit" class="btn btn-secondary advanced adv-hidden" id="show-preview">OpenSearch XML preview</button>
     <p>
-    Due to a <a target="_blank" href="https://github.com/evilpie/add-custom-search-engine/wiki/Technical-Limitation">technical limitation with Firefox WebExtensions</a>, all data entered when creating your custom search engine is <b>uploaded to paste.mozilla.org</b>.
-    After adding the search engine the data should be automatically removed.
+    Due to a <a target="_blank" href="https://github.com/evilpie/add-custom-search-engine/wiki/Technical-Limitation">technical limitation with Firefox WebExtensions</a>, all data entered when creating your custom search engine is <b>uploaded to a third-party service</b>.
+    You agree to the terms given by the service.
+    After adding the search engine the data <i>should</i> be automatically removed.
+    <b>The author of this extension is not responsible for the functionality of these services, and no warranty is provided.</b>
+    You agree to these terms by selecting a service below.
+    </p>
+
+    <div class="row">
+      <div class="col-sm-5">
+        <select id="input-service" class="form-control">
+          <option disabled>Select upload service</option>
+          <option>paste.mozilla.org (dead)</option>
+          <option>dpaste.org</option>
+        </select>
+      </div>
+      <div class="col-sm-7">
+        <button type="submit" class="btn btn-primary">Add custom search engine</button>
+        <button type="submit" class="btn btn-secondary advanced adv-hidden" id="show-preview">OpenSearch XML preview</button>
+      </div>
+    </div>
+
+    <p id="policy-link"></p>
   </div>
 </form>
 

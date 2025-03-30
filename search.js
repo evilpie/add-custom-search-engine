@@ -13,6 +13,19 @@ const XML_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
 <Url type="application/x-suggestions+json" method="get" template=""></Url>
 </OpenSearchDescription>`;
 
+const SERVICES = [
+  {
+    api: "https://paste.mozilla.org/api/",
+    policyName: "\u{201C}Mozilla Privacy Policy\u{201D}",
+    policyUrl: "https://www.mozilla.org/en-US/privacy/",
+  },
+  {
+    api: "https://dpaste.org/api/",
+    policyName: "\u{201C}About dpaste.org (Privacy Statement)\u{201D}",
+    policyUrl: "https://dpaste.org/about/",
+  }
+];
+
 // Work around broken paste.mozilla.org when using Cyrillic.
 function htmlEntityEncode(before) {
   let after = "";
@@ -108,8 +121,10 @@ document.querySelector("form").addEventListener("submit", async event => {
   // requires http(s) URLs. After the XML is downloaded to start the installation
   // process, the file should be automatically removed.
 
+  const service = SERVICES[document.querySelector("#input-service").selectedIndex - 1];
+
   try {
-    let response = await fetch("https://paste.mozilla.org/api/", {
+    let response = await fetch(service.api, {
       method: "POST",
       body: new URLSearchParams({
         content: string,
@@ -121,13 +136,14 @@ document.querySelector("form").addEventListener("submit", async event => {
 
     let json = await response.json();
     // We need the raw XML instead of the pretty HTML view
-    // Mozilla's dpaste instance is misconfigured, we have to fix the URL.
-    let url = json.url.replace("dpaste-base-url.example.org", "paste.mozilla.org") + "/raw";
+    let url = json.url + "/raw";
+
+    let name = document.querySelector("#input-name").value;
 
     let link = document.createElement("link");
     link.rel = "search";
     link.type = "application/opensearchdescription+xml";
-    link.title = document.querySelector("#input-name").value;
+    link.title = name;
     link.href = url;
 
     // This doesn't actually seem to work. Firefox seems to cache.
@@ -140,6 +156,19 @@ document.querySelector("form").addEventListener("submit", async event => {
 
     document.querySelector("#main").style.display = "none";
     document.querySelector("#instructions").style.display = "block";
+
+    // Force deletion as soon possible. In case one-time doesn't work properly.
+    let id = -1;
+    id = setInterval(async () => {
+      const searchEngines = await browser.search.get();
+      for (let engine of searchEngines) {
+        if (engine.name === name) {
+          fetch(json.url);
+          fetch(json.url);
+          clearInterval(id);
+        }
+      }
+    }, 250);
   } catch(error) {
     alert(error);
   };
@@ -150,6 +179,7 @@ document.querySelector("#close").addEventListener("click", event => {
 
   document.querySelector("#main").style.display = "block";
   document.querySelector("#instructions").style.display = "none";
+  resetUploadService();
 })
 
 document.querySelector("#show-preview").addEventListener("click", event => {
@@ -231,10 +261,40 @@ async function checkName(event) {
 }
 document.querySelector("#input-name").addEventListener("change", checkName);
 
+document.querySelector("#input-service").addEventListener("change", ({currentTarget}) => {
+  if (currentTarget.selectedIndex !== 0) {
+    currentTarget.setCustomValidity("");
+    currentTarget.reportValidity();
+
+    let service = SERVICES[currentTarget.selectedIndex - 1];
+
+    let policyLink = document.querySelector("#policy-link");
+    policyLink.textContent = "";
+    policyLink.append("See ");
+    let a = document.createElement("a");
+    a.href = service.policyUrl;
+    a.textContent = service.policyName;
+    a.target = "_blank";
+    policyLink.append(a);
+  } else {
+    resetUploadService();
+  }
+})
+
+function resetUploadService() {
+  let service = document.querySelector("#input-service");
+  service.selectedIndex = 0;
+  service.setCustomValidity("Select a service");
+  // service.reportValidity();
+
+  document.querySelector("#policy-link").textContent = "";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   showAdvanced();
   usePost();
   loadIcon();
+  resetUploadService();
 });
 
 // One-click selection for convience, because we can't directly link about:preferences
